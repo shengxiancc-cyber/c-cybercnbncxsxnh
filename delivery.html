@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CC生鮮 - 草屯定點交貨 | 新鮮優質生鮮零售</title>
+    <title>CC生鮮 - 本週出車送貨班次表 | 每日最新冷鏈直達行程</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #F9F5EB; /* 復古米乳色背景 */
-            color: #1B4F72; /* 深海藍文字 */
+            background-color: #F9F5EB;
+            color: #1B4F72;
         }
         .brand-orange { color: #E85B24; }
         .bg-brand-orange { background-color: #E85B24; }
@@ -22,7 +22,7 @@
         .border-brand-blue { border-color: #1B4F72; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col relative">
 
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -31,15 +31,13 @@
                     <i class="fa-solid fa-fish-fins mr-2 brand-blue"></i>
                     <span class="brand-orange">CC</span>生鮮
                 </div>
-                <span class="hidden md:inline-block bg-brand-blue text-white text-xs px-2 py-1 rounded-full font-medium">定點交貨</span>
+                <span class="hidden md:inline-block bg-brand-blue text-white text-xs px-2 py-1 rounded-full font-medium">當週行程表</span>
             </div>
 
-            <!-- 手機版漢堡選單按鈕 -->
-            <button id="menu-btn" class="md:hidden text-2xl brand-blue">
+            <button id="mobile-menu-button" class="md:hidden text-2xl brand-blue focus:outline-none">
                 <i class="fa-solid fa-bars"></i>
             </button>
 
-            <!-- 桌面版導覽 -->
             <nav class="hidden md:flex space-x-8 text-lg font-medium">
                 <a href="index.html" class="brand-blue hover:text-orange-500 transition">首頁</a>
                 <a href="products.html" class="brand-blue hover:text-orange-500 transition">生鮮商品</a>
@@ -48,138 +46,53 @@
 
             <div class="hidden md:flex items-center space-x-4">
                 <a href="https://line.me/ti/p/@cc8888" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center shadow-sm transition">
-                    <i class="fa-brands fa-line text-lg mr-1.5"></i> LINE 訂購
+                    <i class="fa-brands fa-line text-lg mr-1.5"></i> LINE 聯絡客服
                 </a>
                 <div class="relative cursor-pointer p-2" onclick="toggleCart()">
-                    <i class="fa-solid fa-basket-shopping text-2xl brand-blue"></i>
+                    <i class="fa-solid fa-truck-clock text-2xl brand-blue"></i>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-brand-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </div>
             </div>
         </div>
-        
-        <!-- 手機版下拉選單 -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 p-4 space-y-2">
-            <a href="index.html" class="block py-2 brand-blue font-bold">首頁</a>
-            <a href="products.html" class="block py-2 brand-blue font-bold">生鮮商品</a>
-            <a href="delivery.html" class="block py-2 brand-blue font-bold">交貨據點</a>
-            <a href="https://line.me/ti/p/@cc8888" target="_blank" class="block py-2 bg-green-500 text-white text-center rounded-lg font-bold">LINE 訂購</a>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 p-4 space-y-4 text-center shadow-lg">
+            <a href="index.html" class="block brand-blue font-bold py-2">首頁</a>
+            <a href="products.html" class="block brand-blue font-bold py-2">生鮮商品</a>
+            <a href="delivery.html" class="block brand-blue font-bold py-2">交貨據點</a>
+            <a href="https://line.me/ti/p/@cc8888" target="_blank" class="block bg-green-500 text-white py-2 rounded-lg font-bold">LINE 聯絡客服</a>
+            <button onclick="toggleCart()" class="w-full bg-brand-blue text-white py-2 rounded-lg font-bold mt-2">查看已關注行程</button>
         </div>
     </header>
 
-    <section class="py-12 md:py-20 border-b border-orange-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div class="space-y-6">
-                <div class="inline-block border-2 border-brand-blue rounded-lg p-2 font-bold text-xl md:text-2xl tracking-wider">
-                    <span class="brand-orange">CC生鮮</span> ∣ 定點交貨物流行動
-                </div>
-                <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-tight brand-blue">
-                    草屯在地人的<br><span class="brand-orange">行動海鮮市場</span>
-                </h1>
-                <p class="text-lg text-gray-600 max-w-md">
-                    擁有 1.6 萬成員社團肯定！每日嚴選最頂級、最搶鮮的海鮮與生鮮食材，下單後指定地點準時交貨，把新鮮直接送到您手中。
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-5xl font-black brand-blue mb-4">
+                <span class="brand-orange">CC生鮮</span> 本週最新出車送貨班次
+            </h1>
+            <div class="max-w-3xl mx-auto bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm mb-6">
+                <p class="text-base text-red-700 font-bold flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-lg mr-2"></i>
+                    💡 溫馨提醒：本表班次為本週限定行程，出車路線每週不同！請隨時注意更換。
                 </p>
-                <div class="pt-4 flex flex-wrap gap-4">
-                    <a href="index.html" class="bg-white border-2 border-brand-blue brand-blue px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all">首頁</a>
-                    <a href="products.html" class="bg-brand-orange text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">生鮮商品</a>
-                    <a href="delivery.html" class="bg-white border-2 border-brand-blue brand-blue px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-50 transition-all">交貨據點</a>
-                </div>
             </div>
-            <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-brand-blue flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 text-gray-100 text-[12rem] font-bold select-none z-0">FRESH</div>
-                <div class="relative z-10 flex justify-between items-start">
-                    <div>
-                        <div class="text-5xl font-black brand-orange tracking-wide">CC生鮮</div>
-                        <div class="text-3xl font-bold brand-blue tracking-widest mt-1">定點交貨</div>
-                    </div>
-                    <i class="fa-solid fa-fish text-6xl brand-blue opacity-80"></i>
-                </div>
-                
-                <div class="relative z-10 mt-12 bg-amber-50 p-6 rounded-2xl border-2 border-dashed border-orange-300">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <i class="fa-solid fa-truck-flatbed text-4xl brand-blue"></i>
-                        <span class="text-xl font-bold brand-blue">全線冷鏈・鮮度定點直達</span>
-                    </div>
-                    <ul class="space-y-2 font-medium text-base">
-                        <li class="flex items-center"><i class="fa-solid fa-location-dot w-6 brand-orange"></i> 草屯中正路1002號</li>
-                        <li class="flex items-center"><i class="fa-solid fa-phone w-6 brand-orange"></i> 0920-636242</li>
-                        <li class="flex items-center"><i class="fa-brands fa-line w-6 text-green-500"></i> LINE ID：@cc8888</li>
-                    </ul>
-                </div>
-            </div>
+            <p class="text-gray-600 font-medium">擁有 1.6 萬成員社團肯定！全線配置急速冷凍冷鏈專車，請點選下方按鈕篩選特定日期的行車路線。</p>
         </div>
-    </section>
 
-    <section id="about" class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div class="p-6 space-y-3">
-                    <div class="w-16 h-16 bg-orange-100 text-brand-orange rounded-full flex items-center justify-center text-2xl mx-auto"><i class="fa-solid fa-certificate"></i></div>
-                    <h3 class="text-xl font-bold brand-blue">1.6萬社員見證</h3>
-                    <p class="text-gray-500 text-sm">在地深耕多年，深獲南投草屯街坊鄰居信賴的良心生鮮品質。</p>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="w-16 h-16 bg-blue-100 text-brand-blue rounded-full flex items-center justify-center text-2xl mx-auto"><i class="fa-solid fa-truck-ramp-box"></i></div>
-                    <h3 class="text-xl font-bold brand-blue">指定地點交貨</h3>
-                    <p class="text-gray-500 text-sm">省去高昂宅配運費！約定時間準時出車，定點取貨最便利。</p>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="w-16 h-16 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-2xl mx-auto"><i class="fa-solid fa-snowflake"></i></div>
-                    <h3 class="text-xl font-bold brand-blue">嚴格全程全程低溫</h3>
-                    <p class="text-gray-500 text-sm">從急速冷凍到出車派送，全程維持最佳溫度，鎖住海鮮第一道鮮甜。</p>
-                </div>
-            </div>
+        <div class="flex flex-wrap justify-center gap-3 mb-10" id="filter-container">
+            <button onclick="setFilter('全部')" class="filter-btn active bg-brand-blue text-white px-5 py-2 rounded-full font-bold text-sm transition">全部日期</button>
+            <button onclick="setFilter('星期一')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">星期一 (6/15)</button>
+            <button onclick="setFilter('星期二')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">星期二 (6/16)</button>
+            <button onclick="setFilter('星期三')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">星期三 (6/17)</button>
+            <button onclick="setFilter('星期四')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">星期四 (6/18)</button>
+            <button onclick="setFilter('星期五')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">星期五 (6/19)</button>
         </div>
-    </section>
 
-    <section id="delivery" class="bg-amber-50 py-16 border-t border-orange-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-                <div class="p-8 md:p-12 space-y-6 flex flex-col justify-center">
-                    <h2 class="text-3xl font-black brand-blue"><i class="fa-solid fa-truck-clock brand-orange mr-2"></i>定點交貨・怎麼取貨？</h2>
-                    <p class="text-gray-600">我們在草屯設置了固定取貨中心，同時依據社團公告時間提供各定點的巡迴貨車交貨。免除高額低溫宅配費，現場看得到最安心！</p>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3">
-                            <i class="fa-solid fa-house-user text-xl brand-orange mt-1"></i>
-                            <div>
-                                <h4 class="font-bold text-lg brand-blue">草屯總店據點</h4>
-                                <p class="text-gray-600">南投縣草屯鎮中正路1002號</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <i class="fa-solid fa-phone text-xl brand-orange mt-1"></i>
-                            <div>
-                                <h4 class="font-bold text-lg brand-blue">服務專線</h4>
-                                <p class="text-gray-600">0920-636242 (歡迎提早電話預約)</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <i class="fa-brands fa-line text-xl text-green-500 mt-1"></i>
-                            <div>
-                                <h4 class="font-bold text-lg brand-blue">官方 LINE 群組</h4>
-                                <p class="text-gray-600">搜尋：<span class="font-bold">@cc8888</span>（最新到貨通知都在這）</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-blue-900 text-white p-8 md:p-12 flex flex-col justify-between items-center text-center relative overflow-hidden">
-                    <div class="my-auto space-y-4 z-10">
-                        <i class="fa-solid fa-map-location-dot text-7xl text-orange-400"></i>
-                        <h3 class="text-2xl font-bold">欲參加草屯其他區域定點交貨</h3>
-                        <p class="text-blue-200 max-w-sm mx-auto text-sm">請隨時關注我們的擁有 1.6 萬團員的「CC生鮮」私密不公開 Facebook 社團，每週固定公告最新交貨車次路線表！</p>
-                        <a href="#" class="inline-block bg-brand-orange hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-full transition shadow-md">
-                            前往 FB 社團追蹤車次
-                        </a>
-                    </div>
-                    <div class="absolute inset-0 opacity-10 pointer-events-none">
-                        <div class="absolute w-96 h-96 rounded-full border-4 border-white -top-20 -right-20"></div>
-                        <div class="absolute w-64 h-64 rounded-full border-4 border-white -bottom-20 -left-20"></div>
-                    </div>
-                </div>
+        <div id="product-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+            <div class="col-span-full text-center py-12 text-gray-400 font-medium">
+                <i class="fa-solid fa-spinner fa-spin mr-2"></i> 最新路線班次表生成中，請稍候...
             </div>
         </div>
-    </section>
+    </main>
 
     <footer class="bg-brand-blue text-white py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
@@ -188,55 +101,281 @@
         </div>
     </footer>
 
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between">
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between" style="width: 380px; max-width: 100vw;">
         <div>
             <div class="flex items-center justify-between border-b pb-4 mb-4">
-                <h3 class="text-xl font-bold brand-blue"><i class="fa-solid fa-basket-shopping mr-2"></i>您的取貨籃</h3>
+                <h3 class="text-xl font-bold brand-blue"><i class="fa-solid fa-bookmark mr-2"></i>我關注的路線站點</h3>
                 <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <div id="cart-items" class="space-y-4 overflow-y-auto max-h-[60vh] text-sm text-gray-500">
-                目前購物車是空的，快去挑選新鮮食材吧！
+            <div id="cart-items" class="space-y-4 overflow-y-auto max-h-[60vh] text-sm text-gray-500 pr-2">
+                點擊路線右下角「關注此路線」，可在此欄快速紀錄今天的取貨站點喔！
             </div>
         </div>
-        <div class="border-t pt-4 space-y-3">
-            <div class="flex justify-between font-bold text-lg brand-blue">
-                <span>預估小計：</span>
-                <span id="cart-total">NT$ 0</span>
+        <div class="border-t pt-4 space-y-3 bg-white">
+            <div class="flex justify-between font-bold text-lg brand-blue mb-2">
+                <span>已標記路線數：</span>
+                <span id="cart-total" class="brand-orange text-xl">0 條線路</span>
             </div>
-            <p class="text-xs text-red-500">💡 溫馨提醒：定點交貨請於約定時間前往據點取貨付款。</p>
+            <p class="text-xs text-red-500">💡 提示：本表每週更新，建議於出車時間前半小時出門，現場看貨取貨付款最划算。</p>
             <a href="https://line.me/ti/p/@cc8888" target="_blank" class="w-full block text-center bg-brand-orange text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition">
-                發送 LINE 訊息完成預訂
+                前往 LINE 確認商品保留狀況
             </a>
         </div>
     </div>
 
-    <script>
-        let cart = [];
-        let count = 0;
+    <div class="fixed bottom-6 right-6 z-40 flex flex-col items-center space-y-2">
+        <div id="social-fab-menu" class="flex flex-col items-center space-y-3 transition-all duration-300 transform translate-y-8 opacity-0 pointer-events-none">
+            <a href="https://www.facebook.com/share/g/1HTt5qVwUY/" target="_blank" class="w-12 h-12 bg-[#1877F2] text-white rounded-full flex items-center justify-center text-xl shadow-lg hover:bg-blue-700 transition transform hover:scale-110">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            <a href="https://line.me/ti/p/@cc8888" target="_blank" class="w-12 h-12 bg-[#06C755] text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:bg-green-600 transition transform hover:scale-110">
+                <i class="fa-brands fa-line"></i>
+            </a>
+        </div>
+        
+        <button onclick="toggleSocialFab()" class="w-8 h-8 bg-white text-gray-500 rounded-full flex items-center justify-center text-sm shadow-md border border-gray-100 hover:bg-gray-50 transition relative z-10 -mb-2">
+            <i id="social-fab-icon" class="fa-solid fa-chevron-up"></i>
+        </button>
 
+        <button onclick="toggleCart()" class="w-16 h-16 bg-brand-orange text-white rounded-full flex items-center justify-center text-2xl shadow-2xl hover:bg-[#D14A1B] transition relative z-20 transform hover:scale-105">
+            <i class="fa-solid fa-truck-clock"></i>
+            <span id="fab-cart-count" class="absolute -top-1 -right-1 bg-brand-blue text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold border-2 border-white">0</span>
+        </button>
+    </div>
+
+    <script>
         // 手機選單切換
-        document.getElementById('menu-btn').addEventListener('click', () => {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
+
+        // 展開/收合右下角社群懸浮按鈕
+        function toggleSocialFab() {
+            const menu = document.getElementById('social-fab-menu');
+            const icon = document.getElementById('social-fab-icon');
+            
+            if (menu.classList.contains('opacity-0')) {
+                menu.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
+                menu.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                menu.classList.add('opacity-0', 'translate-y-8', 'pointer-events-none');
+                menu.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                icon.classList.add('fa-chevron-up');
+                icon.classList.remove('fa-chevron-down');
+            }
+        }
+
+        // ==========================================
+        // 🚨 這裡填入您剛才建立的 Google Sheet ID 🚨
+        // ==========================================
+        const SHEET_ID = '1bH5pruibJGlt4elKZUMcKRgAWRDraUX8w-A36atC3Js'; 
+        const GVIZ_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vT1JakTA2I9BygB9JYBg68NKaO_W3uDGMjoBi-eVvEUO5bZkY2PudMADsJbIsiZ318qaDKYQDWqROfn/pub?output=csv`;
+
+        let cart = [];
+        let currentFilter = '全部';
+        let weekSchedules = []; // 預設為空陣列，準備從試算表接收資料
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchSchedulesFromSheet();
+        });
+
+        // 動態連線取得 Google 試算表內容
+        async function fetchSchedulesFromSheet() {
+            try {
+                if(SHEET_ID === '在此填入您的_Google_Sheet_ID') {
+                    document.getElementById('product-container').innerHTML = 
+                        '<div class="col-span-full text-center py-12 text-red-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i>請先在程式碼中的 SHEET_ID 處，填寫您的試算表 ID。</div>';
+                    return;
+                }
+
+                const response = await fetch(GVIZ_URL);
+                const text = await response.text();
+                
+                // 解析 Google Visualization API 特殊的 JSON 格式
+                const jsonString = text.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/)[1];
+                const data = JSON.parse(jsonString);
+
+                weekSchedules = data.table.rows.map(row => {
+                    const id = row.c[0] ? row.c[0].v : '';
+                    const category = row.c[1] ? row.c[1].v : '';
+                    const dateTitle = row.c[2] ? row.c[2].v : '';
+                    const routeName = row.c[3] ? row.c[3].v : '';
+                    const stopsRaw = row.c[4] ? row.c[4].v : '';
+
+                    // 依據 | 與 ; 切割試算表內的文字成為物件陣列
+                    const stops = stopsRaw.split(';').map(stopStr => {
+                        const parts = stopStr.split('|');
+                        return {
+                            name: parts[0] ? parts[0].trim() : '',
+                            time: parts[1] ? parts[1].trim() : ''
+                        };
+                    }).filter(s => s.name !== '');
+
+                    return { id, category, dateTitle, routeName, stops };
+                }).filter(item => item.id !== '' && item.id !== 'ID'); // 自動過濾空行與試算表標題列
+
+                renderSchedules();
+            } catch (error) {
+                console.error('載入試算表失敗', error);
+                document.getElementById('product-container').innerHTML = 
+                    '<div class="col-span-full text-center py-12 text-red-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i>最新班次載入失敗，請確認 Google 試算表權限已設為「知道連結的任何人均可檢視」。</div>';
+            }
+        }
+
+        // 設置切換日期邏輯
+        function setFilter(category) {
+            currentFilter = category;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText.includes(category)) {
+                    btn.className = 'filter-btn active bg-brand-blue text-white px-5 py-2 rounded-full font-bold text-sm transition';
+                } else {
+                    btn.className = 'filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition';
+                }
+            });
+            
+            renderSchedules();
+        }
+
+        // 動態生成美化排版時刻表卡片
+        function renderSchedules() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = '';
+
+            let filtered = weekSchedules;
+            if (currentFilter !== '全部') {
+                filtered = weekSchedules.filter(s => s.category === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 font-medium">該日期目前沒有設定路線。</div>';
+                return;
+            }
+
+            filtered.forEach(route => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl p-6 shadow-md border border-orange-100 flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative';
+                
+                let stopsHTML = '';
+                route.stops.forEach((stop, index) => {
+                    stopsHTML += `
+                        <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 hover:bg-amber-50/50 px-2 rounded-lg transition">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-5 h-5 bg-brand-blue/10 text-brand-blue text-xs rounded-full flex items-center justify-center font-bold">${index + 1}</span>
+                                <span class="font-bold text-gray-700 text-sm md:text-base">${stop.name}</span>
+                            </div>
+                            <span class="bg-brand-orange/10 brand-orange text-xs md:text-sm font-bold px-3 py-1 rounded-md">
+                                <i class="fa-regular fa-clock mr-1"></i>${stop.time}
+                            </span>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-brand-blue text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                <i class="fa-regular fa-calendar-days mr-1"></i>${route.dateTitle}
+                            </span>
+                            <span class="text-xs text-gray-400 font-medium">當週專車</span>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-black brand-blue border-b-2 border-dashed border-orange-200 pb-3 mb-4 flex items-center">
+                            <i class="fa-solid fa-truck-ramp-box mr-2 brand-orange text-lg"></i>${route.routeName}
+                        </h3>
+                        
+                        <div class="space-y-1 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                            ${stopsHTML}
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-4 mt-6 border-t border-gray-50 min-h-[50px]">
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">
+                            <i class="fa-solid fa-snowflake mr-1"></i>全程低溫冷鏈
+                        </span>
+                        <div class="product-action-container" data-id="${route.id}" data-name="${route.routeName}"></div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            updateCartUI();
+        }
 
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
             sidebar.classList.toggle('translate-x-full');
         }
 
-        function addToCart(itemName) {
-            count++;
-            document.getElementById('cart-count').innerText = count;
-            
+        // 關注行程控制邏輯
+        function addToCart(id, name) {
+            if(!cart.find(item => item.id === id)) {
+                cart.push({ id, name });
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        // 雙向同步網頁上所有狀態與右側懸浮欄
+        function updateCartUI() {
+            const cartCount = document.getElementById('cart-count');
+            const fabCartCount = document.getElementById('fab-cart-count');
             const cartItems = document.getElementById('cart-items');
-            if(count === 1) cartItems.innerHTML = ''; 
-            
-            const newItem = document.createElement('div');
-            newItem.className = 'flex justify-between items-center bg-gray-50 p-2 rounded';
-            newItem.innerHTML = `<span>${itemName}</span><span class="font-bold text-brand-orange">x 1</span>`;
-            cartItems.appendChild(newItem);
-            
-            alert(`【${itemName}】已成功加入取貨籃！可點選右上角購物車查看。`);
+            const cartTotal = document.getElementById('cart-total');
+
+            let totalCount = cart.length;
+            cartItems.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '點擊路線右下角「關注此路線」，可在此欄快速紀錄今天的取貨站點喔！';
+            } else {
+                cart.forEach(item => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 shadow-sm';
+                    itemEl.innerHTML = `
+                        <div class="flex flex-col pr-2">
+                            <span class="font-bold brand-blue text-sm">${item.name}</span>
+                            <span class="text-xs text-brand-orange font-medium"><i class="fa-solid fa-star mr-1"></i>已加入今日鎖定行程</span>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" class="text-red-400 hover:text-red-600 font-bold p-2">
+                            <i class="fa-solid fa-trash-can text-base"></i>
+                        </button>
+                    `;
+                    cartItems.appendChild(itemEl);
+                });
+            }
+
+            cartCount.innerText = totalCount;
+            if (fabCartCount) fabCartCount.innerText = totalCount;
+            cartTotal.innerText = `${totalCount} 條線路`;
+
+            // 同步切換主網格上每個按鈕的選取視覺狀態
+            document.querySelectorAll('.product-action-container').forEach(container => {
+                const id = container.getAttribute('data-id');
+                const name = container.getAttribute('data-name');
+                const isFocused = cart.find(item => item.id === id);
+
+                if (isFocused) {
+                    container.innerHTML = `
+                        <button onclick="removeFromCart('${id}')" class="bg-brand-orange text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center shadow-sm">
+                            <i class="fa-solid fa-star mr-1.5"></i> 取消關注
+                        </button>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <button onclick="addToCart('${id}', '${name}')" class="bg-brand-blue hover:bg-opacity-90 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center shadow-sm">
+                            <i class="fa-regular fa-star mr-1.5"></i> 關注此路線
+                        </button>
+                    `;
+                }
+            });
         }
     </script>
 </body>
