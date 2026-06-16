@@ -144,14 +144,12 @@
     </div>
 
     <script>
-        // 手機選單切換
         const menuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         menuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
 
-        // 展開/收合右下角社群懸浮按鈕
         function toggleSocialFab() {
             const menu = document.getElementById('social-fab-menu');
             const icon = document.getElementById('social-fab-icon');
@@ -169,10 +167,6 @@
             }
         }
 
-        // ==========================================
-        // 🚨 修正後的 Google API 抓取網址
-        // ==========================================
-       // 🚨 請將原本的 SHEET_ID 改成這串新的：
         const SHEET_ID = '1bH5pruibJGlt4elKZUMcKRgAWRDraUX8w-A36atC3Js'; 
         const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
         
@@ -184,19 +178,11 @@
             fetchSchedulesFromSheet();
         });
 
-        // 動態連線取得 Google 試算表內容
         async function fetchSchedulesFromSheet() {
             try {
-                if(SHEET_ID === '在此填入您的_Google_Sheet_ID') {
-                    document.getElementById('product-container').innerHTML = 
-                        '<div class="col-span-full text-center py-12 text-red-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i>請先在程式碼中的 SHEET_ID 處，填寫您的試算表 ID。</div>';
-                    return;
-                }
-
                 const response = await fetch(GVIZ_URL);
                 const text = await response.text();
                 
-                // 解析 Google Visualization API 特殊的 JSON 格式
                 const jsonString = text.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/)[1];
                 const data = JSON.parse(jsonString);
 
@@ -207,27 +193,46 @@
                     const routeName = row.c[3] ? row.c[3].v : '';
                     const stopsRaw = row.c[4] ? row.c[4].v : '';
 
-                    // 依據 | 與 ; 切割試算表內的文字成為物件陣列
-                    const stops = stopsRaw.split(';').map(stopStr => {
-                        const parts = stopStr.split('|');
-                        return {
-                            name: parts[0] ? parts[0].trim() : '',
-                            time: parts[1] ? parts[1].trim() : ''
-                        };
-                    }).filter(s => s.name !== '');
+                    // ✨【核心修正區】智慧判斷 Google Sheet 資料格式
+                    let stops = [];
+                    if (stopsRaw.includes('|')) {
+                        // 如果有特殊符號，使用舊版切割法
+                        stops = stopsRaw.split(';').map(stopStr => {
+                            const parts = stopStr.split('|');
+                            return {
+                                name: parts[0] ? parts[0].trim() : '',
+                                time: parts[1] ? parts[1].trim() : ''
+                            };
+                        }).filter(s => s.name !== '');
+                    } else {
+                        // 針對沒有符號的「空白分隔文字」，使用智慧正則表達式尋找時間段
+                        // 會尋找像是 16:20-16:45 這樣的格式，並自動把前面的文字當作站名
+                        const regex = /(.*?)\s*(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g;
+                        let match;
+                        while ((match = regex.exec(stopsRaw)) !== null) {
+                            let name = match[1].trim();
+                            let time = match[2].trim();
+                            if (name) {
+                                stops.push({ name, time });
+                            }
+                        }
+                        // 如果什麼時間格式都找不到，為了避免資料不見，就整串顯示出來
+                        if (stops.length === 0 && stopsRaw.trim() !== '') {
+                            stops.push({ name: stopsRaw.trim(), time: '' });
+                        }
+                    }
 
                     return { id, category, dateTitle, routeName, stops };
-                }).filter(item => item.id !== '' && item.id !== 'ID'); // 自動過濾空行與試算表標題列
+                }).filter(item => item.id !== '' && item.id !== 'ID'); 
 
                 renderSchedules();
             } catch (error) {
                 console.error('載入試算表失敗', error);
                 document.getElementById('product-container').innerHTML = 
-                    '<div class="col-span-full text-center py-12 text-red-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i>最新班次載入失敗，請確認 Google 試算表權限已設為「知道連結的任何人均可檢視」。</div>';
+                    '<div class="col-span-full text-center py-12 text-red-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i>最新班次載入失敗，請稍後再試。</div>';
             }
         }
 
-        // 設置切換日期邏輯
         function setFilter(category) {
             currentFilter = category;
             
@@ -242,7 +247,6 @@
             renderSchedules();
         }
 
-        // 動態生成美化排版時刻表卡片
         function renderSchedules() {
             const container = document.getElementById('product-container');
             container.innerHTML = '';
@@ -263,15 +267,16 @@
                 
                 let stopsHTML = '';
                 route.stops.forEach((stop, index) => {
+                    // 若抓不到時間，就不顯示時間標籤（防呆機制）
+                    const timeHTML = stop.time ? `<span class="bg-brand-orange/10 brand-orange text-[11px] md:text-sm font-bold px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0"><i class="fa-regular fa-clock mr-1"></i>${stop.time}</span>` : '';
+                    
                     stopsHTML += `
-                        <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 hover:bg-amber-50/50 px-2 rounded-lg transition">
+                        <div class="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0 hover:bg-amber-50/50 px-1 md:px-2 rounded-lg transition gap-2">
                             <div class="flex items-center space-x-2">
-                                <span class="w-5 h-5 bg-brand-blue/10 text-brand-blue text-xs rounded-full flex items-center justify-center font-bold">${index + 1}</span>
-                                <span class="font-bold text-gray-700 text-sm md:text-base">${stop.name}</span>
+                                <span class="w-5 h-5 flex-shrink-0 bg-brand-blue/10 text-brand-blue text-[10px] rounded-full flex items-center justify-center font-bold">${index + 1}</span>
+                                <span class="font-bold text-gray-700 text-sm md:text-base leading-snug break-words">${stop.name}</span>
                             </div>
-                            <span class="bg-brand-orange/10 brand-orange text-xs md:text-sm font-bold px-3 py-1 rounded-md">
-                                <i class="fa-regular fa-clock mr-1"></i>${stop.time}
-                            </span>
+                            ${timeHTML}
                         </div>
                     `;
                 });
@@ -288,7 +293,7 @@
                             <i class="fa-solid fa-truck-ramp-box mr-2 brand-orange text-lg"></i>${route.routeName}
                         </h3>
                         
-                        <div class="space-y-1 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                        <div class="space-y-1 bg-gray-50/50 p-2 md:p-3 rounded-2xl border border-gray-100">
                             ${stopsHTML}
                         </div>
                     </div>
@@ -311,7 +316,6 @@
             sidebar.classList.toggle('translate-x-full');
         }
 
-        // 關注行程控制邏輯
         function addToCart(id, name) {
             if(!cart.find(item => item.id === id)) {
                 cart.push({ id, name });
@@ -324,7 +328,6 @@
             updateCartUI();
         }
 
-        // 雙向同步網頁上所有狀態與右側懸浮欄
         function updateCartUI() {
             const cartCount = document.getElementById('cart-count');
             const fabCartCount = document.getElementById('fab-cart-count');
@@ -357,7 +360,6 @@
             if (fabCartCount) fabCartCount.innerText = totalCount;
             cartTotal.innerText = `${totalCount} 條線路`;
 
-            // 同步切換主網格上每個按鈕的選取視覺狀態
             document.querySelectorAll('.product-action-container').forEach(container => {
                 const id = container.getAttribute('data-id');
                 const name = container.getAttribute('data-name');
