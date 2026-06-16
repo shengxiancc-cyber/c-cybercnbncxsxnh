@@ -206,7 +206,6 @@
                         }).filter(s => s.name !== '');
                     } else {
                         // 針對沒有符號的「空白分隔文字」，使用智慧正則表達式尋找時間段
-                        // 會尋找像是 16:20-16:45 這樣的格式，並自動把前面的文字當作站名
                         const regex = /(.*?)\s*(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g;
                         let match;
                         while ((match = regex.exec(stopsRaw)) !== null) {
@@ -267,7 +266,6 @@
                 
                 let stopsHTML = '';
                 route.stops.forEach((stop, index) => {
-                    // 若抓不到時間，就不顯示時間標籤（防呆機制）
                     const timeHTML = stop.time ? `<span class="bg-brand-orange/10 brand-orange text-[11px] md:text-sm font-bold px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0"><i class="fa-regular fa-clock mr-1"></i>${stop.time}</span>` : '';
                     
                     stopsHTML += `
