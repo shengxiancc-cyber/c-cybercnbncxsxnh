@@ -34,13 +34,19 @@
                 <span class="hidden md:inline-block bg-brand-blue text-white text-xs px-2 py-1 rounded-full font-medium">定點交貨</span>
             </div>
 
+            <!-- 手機版漢堡選單按鈕 -->
+            <button id="menu-btn" class="md:hidden text-2xl brand-blue">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- 桌面版導覽 -->
             <nav class="hidden md:flex space-x-8 text-lg font-medium">
                 <a href="index.html" class="brand-blue hover:text-orange-500 transition">首頁</a>
                 <a href="products.html" class="brand-blue hover:text-orange-500 transition">生鮮商品</a>
                 <a href="delivery.html" class="brand-blue hover:text-orange-500 transition">交貨據點</a>
             </nav>
 
-            <div class="flex items-center space-x-4">
+            <div class="hidden md:flex items-center space-x-4">
                 <a href="https://line.me/ti/p/@cc8888" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center shadow-sm transition">
                     <i class="fa-brands fa-line text-lg mr-1.5"></i> LINE 訂購
                 </a>
@@ -49,6 +55,14 @@
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-brand-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </div>
             </div>
+        </div>
+        
+        <!-- 手機版下拉選單 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 p-4 space-y-2">
+            <a href="index.html" class="block py-2 brand-blue font-bold">首頁</a>
+            <a href="products.html" class="block py-2 brand-blue font-bold">生鮮商品</a>
+            <a href="delivery.html" class="block py-2 brand-blue font-bold">交貨據點</a>
+            <a href="https://line.me/ti/p/@cc8888" target="_blank" class="block py-2 bg-green-500 text-white text-center rounded-lg font-bold">LINE 訂購</a>
         </div>
     </header>
 
@@ -200,6 +214,11 @@
         let cart = [];
         let count = 0;
 
+        // 手機選單切換
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
             sidebar.classList.toggle('translate-x-full');
@@ -209,9 +228,8 @@
             count++;
             document.getElementById('cart-count').innerText = count;
             
-            // 簡易演示購物車有東西
             const cartItems = document.getElementById('cart-items');
-            if(count === 1) cartItems.innerHTML = ''; // 清空預設「空」文字
+            if(count === 1) cartItems.innerHTML = ''; 
             
             const newItem = document.createElement('div');
             newItem.className = 'flex justify-between items-center bg-gray-50 p-2 rounded';
