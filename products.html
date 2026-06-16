@@ -63,15 +63,25 @@
             <a href="products.html" class="block brand-blue font-bold py-2">生鮮商品</a>
             <a href="delivery.html" class="block brand-blue font-bold py-2">交貨據點</a>
             <a href="https://line.me/ti/p/@cc8888" target="_blank" class="block bg-green-500 text-white py-2 rounded-lg font-bold">LINE 訂購</a>
+            <button onclick="toggleCart()" class="w-full bg-brand-blue text-white py-2 rounded-lg font-bold mt-2">查看個人購物車</button>
         </div>
     </header>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center mb-12">
+        <div class="text-center mb-10">
             <h1 class="text-3xl md:text-5xl font-black brand-blue mb-4">
                 <span class="brand-orange">CC生鮮</span> 嚴選食材販售
             </h1>
             <p class="text-lg text-gray-600 font-medium">擁有 1.6 萬成員社團肯定！每日嚴選最頂級、最搶鮮的海鮮與食材，加入購物車即刻試算金額。</p>
+        </div>
+
+        <!-- 分類篩選區 -->
+        <div class="flex flex-wrap justify-center gap-3 mb-10" id="filter-container">
+            <button onclick="setFilter('全部')" class="filter-btn active bg-brand-blue text-white px-5 py-2 rounded-full font-bold text-sm transition">全部</button>
+            <button onclick="setFilter('季節推薦')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">季節推薦</button>
+            <button onclick="setFilter('肉品')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">肉品</button>
+            <button onclick="setFilter('海鮮')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">海鮮</button>
+            <button onclick="setFilter('冷凍食品')" class="filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition">冷凍食品</button>
         </div>
 
         <div id="product-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -88,18 +98,19 @@
         </div>
     </footer>
 
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-85 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between">
+    <!-- 個人購物車側邊欄 -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-85 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between" style="width: 380px; max-width: 100vw;">
         <div>
             <div class="flex items-center justify-between border-b pb-4 mb-4">
-                <h3 class="text-xl font-bold brand-blue"><i class="fa-solid fa-basket-shopping mr-2"></i>您的取貨籃</h3>
+                <h3 class="text-xl font-bold brand-blue"><i class="fa-solid fa-basket-shopping mr-2"></i>個人購物車</h3>
                 <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <div id="cart-items" class="space-y-4 overflow-y-auto max-h-[60vh] text-sm text-gray-500">
+            <div id="cart-items" class="space-y-4 overflow-y-auto max-h-[60vh] text-sm text-gray-500 pr-2">
                 目前購物車是空的，快去挑選新鮮食材吧！
             </div>
         </div>
-        <div class="border-t pt-4 space-y-3">
-            <div class="flex justify-between font-bold text-lg brand-blue">
+        <div class="border-t pt-4 space-y-3 bg-white">
+            <div class="flex justify-between font-bold text-lg brand-blue mb-2">
                 <span>預估總計金額：</span>
                 <span id="cart-total" class="brand-orange text-xl">NT$ 0</span>
             </div>
@@ -118,13 +129,31 @@
             mobileMenu.classList.toggle('hidden');
         });
 
-        // 🔗 已成功自動綁定您的 Google 試算表網址路徑
+        // 🔗 您的 Google 試算表網址路徑
         const SPREADSHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdDvjqWwne3ZZC59vHSAr877h6ayU68GFUDjYjhuvCaPcKF2jKakPkYbBpVl-TZWR4Wy3A4nvcI9pm/pub?output=csv';
         let cart = [];
+        let allProducts = []; // 全域變數：儲存所有商品供篩選使用
+        let currentFilter = '全部'; // 當前選擇的分類
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchProducts();
         });
+
+        // 設定分類篩選
+        function setFilter(category) {
+            currentFilter = category;
+            
+            // 更新按鈕樣式
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText === category) {
+                    btn.className = 'filter-btn active bg-brand-blue text-white px-5 py-2 rounded-full font-bold text-sm transition';
+                } else {
+                    btn.className = 'filter-btn bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 px-5 py-2 rounded-full font-bold text-sm transition';
+                }
+            });
+            
+            renderProducts();
+        }
 
         // 抓取試算表資料
         async function fetchProducts() {
@@ -132,8 +161,8 @@
                 const response = await fetch(SPREADSHEET_CSV_URL);
                 if (!response.ok) throw new Error('無法讀取試算表資料');
                 const csvText = await response.text();
-                const products = parseCSV(csvText);
-                renderProducts(products);
+                allProducts = parseCSV(csvText); // 儲存至全域陣列
+                renderProducts(); // 使用無參數呼叫
             } catch (error) {
                 console.error(error);
                 document.getElementById('product-container').innerHTML = `
@@ -143,7 +172,7 @@
             }
         }
 
-        // 解析您的 10 大指定順序欄位
+        // 解析 CSV 格式
         function parseCSV(text) {
             const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
             if (lines.length < 2) return [];
@@ -180,15 +209,21 @@
             });
         }
 
-        // 動態渲染網格
-        function renderProducts(products) {
+        // 動態渲染商品網格
+        function renderProducts() {
             const container = document.getElementById('product-container');
             container.innerHTML = '';
 
-            const visibleProducts = products.filter(p => p.visible !== 'FALSE' && p.name !== '');
+            // 先過濾上架中 (TRUE) 且名稱不為空的商品
+            let visibleProducts = allProducts.filter(p => p.visible !== 'FALSE' && p.name !== '');
+
+            // 套用分類篩選
+            if (currentFilter !== '全部') {
+                visibleProducts = visibleProducts.filter(p => p.category === currentFilter);
+            }
 
             if (visibleProducts.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">目前雲端試算表中沒有任何上架中 (TRUE) 的商品。</div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">該分類目前沒有商品。</div>`;
                 return;
             }
 
@@ -229,7 +264,7 @@
                     `;
                 }
 
-                const tagHTML = product.category ? `<span class="absolute top-3 right-3 bg-brand-orange text-white text-xs px-2 py-0.5 rounded-full font-bold">${product.category}</span>` : '';
+                const tagHTML = product.category ? `<span class="absolute top-3 right-3 bg-brand-orange text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">${product.category}</span>` : '';
 
                 const productCard = document.createElement('div');
                 productCard.className = 'bg-white rounded-3xl p-6 shadow-md border border-orange-100 flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative';
@@ -243,22 +278,26 @@
                         <p class="text-gray-500 text-sm mb-1">規格：${product.spec || '依現場為主'}</p>
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed">${product.intro || '產地新鮮嚴選直送，完美鎖住食材第一道鮮甜原味。'}</p>
                     </div>
-                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-50 min-h-[60px]">
                         ${priceHTML}
-                        <button onclick="addToCart('${product.id || product.name}', '${product.name}', ${finalPrice})" class="bg-brand-blue hover:bg-opacity-90 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center shadow-sm">
-                            <i class="fa-solid fa-cart-plus mr-1.5"></i> 加入購物車
-                        </button>
+                        <!-- 加入購物車或 +/- 調整按鈕的容器 -->
+                        <div class="product-action-container" data-id="${product.id || product.name}" data-name="${product.name}" data-price="${finalPrice}"></div>
                     </div>
                 `;
                 container.appendChild(productCard);
             });
+
+            // 根據當前購物車狀態渲染每個商品卡片上的按鈕
+            updateCartUI();
         }
 
+        // 開關購物車側邊欄
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
             sidebar.classList.toggle('translate-x-full');
         }
 
+        // 加入購物車
         function addToCart(id, name, price) {
             const existingItem = cart.find(item => item.id === id);
             if (existingItem) {
@@ -269,6 +308,7 @@
             updateCartUI();
         }
 
+        // 更新購物車數量
         function updateQuantity(id, delta) {
             const item = cart.find(item => item.id === id);
             if (item) {
@@ -280,6 +320,7 @@
             updateCartUI();
         }
 
+        // 更新介面 (包含購物車側欄 & 商品卡片按鈕)
         function updateCartUI() {
             const cartCount = document.getElementById('cart-count');
             const cartItems = document.getElementById('cart-items');
@@ -289,6 +330,7 @@
             let totalPrice = 0;
             cartItems.innerHTML = '';
 
+            // 更新側欄內容
             if (cart.length === 0) {
                 cartItems.innerHTML = '目前購物車是空的，快去挑選新鮮食材吧！';
             } else {
@@ -297,16 +339,16 @@
                     totalPrice += item.price * item.quantity;
 
                     const itemEl = document.createElement('div');
-                    itemEl.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100';
+                    itemEl.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 shadow-sm';
                     itemEl.innerHTML = `
-                        <div class="flex flex-col">
+                        <div class="flex flex-col pr-2">
                             <span class="font-bold brand-blue text-base">${item.name}</span>
-                            <span class="text-xs text-brand-orange font-medium">NT$ ${item.price} / 件</span>
+                            <span class="text-xs text-brand-orange font-medium">NT$ ${item.price.toLocaleString()} / 件</span>
                         </div>
-                        <div class="flex items-center space-x-2 bg-white rounded-lg border px-1 py-0.5">
-                            <button onclick="updateQuantity('${item.id}', -1)" class="w-6 h-6 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center font-bold hover:bg-gray-200 text-xs">-</button>
+                        <div class="flex items-center space-x-2 bg-white rounded-lg border px-1 py-1">
+                            <button onclick="updateQuantity('${item.id}', -1)" class="w-7 h-7 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center font-bold hover:bg-gray-200">-</button>
                             <span class="font-bold text-gray-700 w-6 text-center text-sm">${item.quantity}</span>
-                            <button onclick="updateQuantity('${item.id}', 1)" class="w-6 h-6 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center font-bold hover:bg-gray-200 text-xs">+</button>
+                            <button onclick="updateQuantity('${item.id}', 1)" class="w-7 h-7 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center font-bold hover:bg-gray-200">+</button>
                         </div>
                     `;
                     cartItems.appendChild(itemEl);
@@ -315,6 +357,32 @@
 
             cartCount.innerText = totalCount;
             cartTotal.innerText = `NT$ ${totalPrice.toLocaleString()}`;
+
+            // 雙向同步：更新各商品卡片上的按鈕顯示狀態
+            document.querySelectorAll('.product-action-container').forEach(container => {
+                const id = container.getAttribute('data-id');
+                const name = container.getAttribute('data-name');
+                const price = Number(container.getAttribute('data-price'));
+                const cartItem = cart.find(item => item.id === id);
+
+                if (cartItem && cartItem.quantity > 0) {
+                    // 若購物車內已有此商品，顯示數量控制按鈕 +/-
+                    container.innerHTML = `
+                        <div class="flex items-center space-x-3 bg-gray-50 rounded-xl border border-gray-200 px-2 py-1 shadow-sm">
+                            <button onclick="updateQuantity('${id}', -1)" class="w-8 h-8 rounded-lg bg-white shadow-sm text-gray-600 font-bold hover:bg-gray-100 flex items-center justify-center transition">-</button>
+                            <span class="font-bold brand-blue w-6 text-center text-lg">${cartItem.quantity}</span>
+                            <button onclick="updateQuantity('${id}', 1)" class="w-8 h-8 rounded-lg bg-brand-blue shadow-sm text-white font-bold hover:bg-opacity-90 flex items-center justify-center transition">+</button>
+                        </div>
+                    `;
+                } else {
+                    // 尚未加入，顯示「加入購物車」按鈕
+                    container.innerHTML = `
+                        <button onclick="addToCart('${id}', '${name}', ${price})" class="bg-brand-blue hover:bg-opacity-90 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center shadow-sm">
+                            <i class="fa-solid fa-cart-plus mr-1.5"></i> 加入購物車
+                        </button>
+                    `;
+                }
+            });
         }
     </script>
 </body>
