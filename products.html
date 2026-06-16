@@ -528,11 +528,9 @@
             message += "------------------------\n";
             message += "💡 溫馨提醒：請選擇傳送至「CC生鮮」官方帳號聊天室，並請留下您的「取貨人姓名與聯絡電話」，以便官方人員為您核對並安排交貨據點與取貨時間。謝謝！";
 
-            // 2. 使用 LINE 分享文字的 URL Scheme，引導用戶傳送給官方帳號
-            const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
-            
-            // 3. 開啟 LINE 應用程式或網頁
-            window.open(lineUrl, '_blank');
+            const encodedMsg = encodeURIComponent(lineMessage);
+                window.location.href = `https://line.me/R/oaMessage/@022tfybd/?${encodedMsg}`;
+            });
         }
     </script>
 </body>
