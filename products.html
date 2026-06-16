@@ -34,13 +34,19 @@
                 <span class="hidden md:inline-block bg-brand-blue text-white text-xs px-2 py-1 rounded-full font-medium">線上商城</span>
             </div>
 
+            <!-- 手機版選單按鈕 -->
+            <button id="mobile-menu-button" class="md:hidden text-2xl brand-blue focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- 桌面版導覽 -->
             <nav class="hidden md:flex space-x-8 text-lg font-medium">
                 <a href="index.html" class="brand-blue hover:text-orange-500 transition">首頁</a>
                 <a href="products.html" class="brand-blue hover:text-orange-500 transition">生鮮商品</a>
                 <a href="delivery.html" class="brand-blue hover:text-orange-500 transition">交貨據點</a>
             </nav>
 
-            <div class="flex items-center space-x-4">
+            <div class="hidden md:flex items-center space-x-4">
                 <a href="https://line.me/ti/p/@cc8888" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center shadow-sm transition">
                     <i class="fa-brands fa-line text-lg mr-1.5"></i> LINE 訂購
                 </a>
@@ -49,6 +55,14 @@
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-brand-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </div>
             </div>
+        </div>
+
+        <!-- 手機版下拉選單 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 p-4 space-y-4 text-center shadow-lg">
+            <a href="index.html" class="block brand-blue font-bold py-2">首頁</a>
+            <a href="products.html" class="block brand-blue font-bold py-2">生鮮商品</a>
+            <a href="delivery.html" class="block brand-blue font-bold py-2">交貨據點</a>
+            <a href="https://line.me/ti/p/@cc8888" target="_blank" class="block bg-green-500 text-white py-2 rounded-lg font-bold">LINE 訂購</a>
         </div>
     </header>
 
@@ -97,6 +111,13 @@
     </div>
 
     <script>
+        // 手機版選單切換
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
         // 🔗 已成功自動綁定您的 Google 試算表網址路徑
         const SPREADSHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdDvjqWwne3ZZC59vHSAr877h6ayU68GFUDjYjhuvCaPcKF2jKakPkYbBpVl-TZWR4Wy3A4nvcI9pm/pub?output=csv';
         let cart = [];
@@ -144,7 +165,6 @@
                 }
                 values.push(current.trim().replace(/^"|"$/g, ''));
 
-                // 欄位精確對應：是否顯示(0) / 編號(1) / 商品名稱(2) / 價格(3) / 圖片網址(4) / 商品規格(5) / 商品簡介(6) / 優惠價格(7) / 商品分類(8) / 庫存數量(9)
                 return {
                     visible: values[0] ? values[0].toUpperCase().trim() : 'TRUE', 
                     id: values[1] || '',                                    
@@ -165,7 +185,6 @@
             const container = document.getElementById('product-container');
             container.innerHTML = '';
 
-            // 過濾：排除 visible 為 FALSE 以及名稱為空的商品項目
             const visibleProducts = products.filter(p => p.visible !== 'FALSE' && p.name !== '');
 
             if (visibleProducts.length === 0) {
@@ -174,7 +193,6 @@
             }
 
             visibleProducts.forEach(product => {
-                // 特價處理邏輯
                 const hasPromo = product.promoPrice && product.promoPrice.trim() !== '';
                 const finalPrice = hasPromo ? Number(product.promoPrice) : Number(product.price);
 
@@ -190,7 +208,6 @@
                     priceHTML = `<span class="text-2xl font-black brand-orange">NT$ ${finalPrice.toLocaleString()}</span>`;
                 }
 
-                // 圖片展示處理
                 let imageContainerHTML = '';
                 if (product.imgUrl && product.imgUrl.startsWith('http')) {
                     imageContainerHTML = `
