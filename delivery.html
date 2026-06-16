@@ -170,14 +170,14 @@
         }
 
         // ==========================================
-        // 🚨 這裡填入您剛才建立的 Google Sheet ID 🚨
+        // 🚨 修正後的 Google API 抓取網址
         // ==========================================
         const SHEET_ID = '1bH5pruibJGlt4elKZUMcKRgAWRDraUX8w-A36atC3Js'; 
-        const GVIZ_URL = `https://docs.google.com/spreadsheets/d/1bH5pruibJGlt4elKZUMcKRgAWRDraUX8w-A36atC3Js/edit?usp=sharing`;
+        const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
         let cart = [];
         let currentFilter = '全部';
-        let weekSchedules = []; // 預設為空陣列，準備從試算表接收資料
+        let weekSchedules = []; 
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchSchedulesFromSheet();
